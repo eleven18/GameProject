@@ -24,18 +24,27 @@ public class PlayerMovement : MonoBehaviour {
 
 	void Update ()
     {
+        
+    }
+
+    private void FixedUpdate()
+    {
         if (Input.GetButton("Horizontal"))
         {
+            //Jezeli biegnie (m_Running = true)
             m_Running = true;
             m_Rigidbody.velocity = new Vector2(Input.GetAxis("Horizontal") * m_Speed, m_Rigidbody.velocity.y);
             m_PlayerAnimator.SetBool("run", true);
 
+            //Jezeli sie porusza to
             if (m_Rigidbody.velocity != Vector2.zero)
             {
+                //Jezeli predkosc jest ujemna (biegnie w lewo) obroc go w lewo
                 if (m_Rigidbody.velocity.x < 0)
                 {
                     transform.right = Vector2.left;
                 }
+                //Jezeli predkosc jest dodatnia (biegnie w prawo) obrog go w prawo
                 else
                 {
                     transform.right = Vector2.right;
@@ -45,13 +54,14 @@ public class PlayerMovement : MonoBehaviour {
         }
         else
         {
+            //Jezeli nie  biega (m_Running = false)
             m_Running = false;
             m_Rigidbody.velocity = Vector2.zero;
             m_PlayerAnimator.SetBool("run", false);
         }
 
 
-
+        //Jezeli klikniesz skacz i stoi na ziemi (m_Grounded == true) to skocz
         if (Input.GetButton("Jump") && m_Grounded)
         {
             m_Rigidbody.AddForce(new Vector2(0, Input.GetAxis("Jump") * m_JumpForce));
@@ -63,21 +73,21 @@ public class PlayerMovement : MonoBehaviour {
         }
     }
 
-    private void FixedUpdate()
-    {
-       
-    }
-
     void OnTriggerEnter2D(Collider2D other)
     {
+        //Jezeli trigger przy nogach dotyka ziemi (m_Grounded = true)
         m_Grounded = true;
+        //Jezeli nie biegnie to 
         if(!m_Running)
         {
+            //Do animacji stania wyslac prawde
             m_PlayerAnimator.SetBool("player_stay", true);
+            //Do animacji skoku wyslac falsz
             m_PlayerAnimator.SetBool("player_jump", false);
         }
         else
         {
+            //Inaczej (jezeli biegnie) wyslac do biegu prawde a do skoku falsz
             m_PlayerAnimator.SetBool("player_run", true);
             m_PlayerAnimator.SetBool("player_jump", false);
         }
@@ -85,6 +95,7 @@ public class PlayerMovement : MonoBehaviour {
 
     private void OnTriggerExit2D(Collider2D other)
     {
+        //Jezeli nie dotyka ziemi (m_Grounded = false)
         m_Grounded = false;
     }
 }
